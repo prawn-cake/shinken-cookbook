@@ -1,0 +1,28 @@
+{
+  "name": "stage",
+  "description": "The staging environment",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "default_attributes": {
+  },
+  "override_attributes": {
+    "shinken": {
+      "hostgroups": {
+        "dns-servers": {
+          "search_str": "recipes:ec2dnsserver\\:\\:default",
+          "conf": {
+            "alias": "DNS Servers"
+          }
+        }
+      },
+      "services": {
+        "stage-dns": {
+          "hostgroup_name": "dns-servers",
+          "service_description": "DNS Service Check",
+          "check_command": "check_dig!stage-dns-1b.priv.evertrue.com",
+          "contact_groups": "admins"
+        }
+      }
+    }
+  }
+}

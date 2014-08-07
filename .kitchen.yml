@@ -1,0 +1,24 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+  client_rb:
+    environment: 'stage'
+  encrypted_data_bag_secret_key_path: <%= ENV['HOME'] %>/.chef/encrypted_data_bag_secret
+
+platforms:
+  - name: ubuntu-12.04
+
+suites:
+  - name: default
+    driver_config:
+      network:
+      - [ 'private_network', {ip: '192.168.33.11'}]
+    run_list: [
+      'recipe[shinken::default]',
+      'recipe[shinken::webui]',
+      'recipe[shinken::broker]'
+    ]
+    attributes:

@@ -1,0 +1,11 @@
+{
+  "name": "stage-dns-1b",
+  "chef_environment": "stage",
+  "automatic": {
+    "fqdn": "stage-dns-1b.priv.evertrue.com",
+    "ipaddress": "10.99.5.204",
+    "recipes": [
+      "ec2dnsserver::default"
+    ]
+  }
+}

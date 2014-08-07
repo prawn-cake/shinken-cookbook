@@ -1,0 +1,120 @@
+credentials =
+  Chef::EncryptedDataBagItem.load(
+    node['shinken']['webui']['credentials_data_bag'],
+    node['shinken']['webui']['credentials_data_bag_item']
+  )
+
+if credentials['shinken']
+  shinken_users = search(:users, 'shinken:*')
+
+  shinken_users.each do |contact|
+    fail "Missing credentials for #{contact['id']}" unless credentials['shinken'][contact['id']]
+    template "/etc/shinken/contacts/#{contact['id']}.cfg" do
+      source 'generic-contact.cfg.erb'
+      owner  node['shinken']['user']
+      group  node['shinken']['group']
+      mode   0600
+      variables(
+        contact: contact,
+        password: credentials['shinken'][contact['id']]
+      )
+      notifies :restart, 'service[shinken]'
+    end
+  end
+end
+
+template '/etc/shinken/contactgroups/admins.cfg' do
+  source 'generic-contactgroups.cfg.erb'
+  owner  node['shinken']['user']
+  group  node['shinken']['group']
+  mode   0644
+  variables(
+    cg_name: 'admins',
+    cg_alias: 'admins',
+    members: shinken_users.select { |u| u['shinken']['is_admin'] == '1' }.map { |u| u['id'] }
+  )
+  notifies :restart, 'service[shinken]'
+end
+
+template '/etc/shinken/contactgroups/users.cfg' do
+  source 'generic-contactgroups.cfg.erb'
+  owner  node['shinken']['user']
+  group  node['shinken']['group']
+  mode   0644
+  variables(
+    cg_name: 'users',
+    cg_alias: 'users',
+    members: shinken_users.map { |u| u['id'] }
+  )
+  notifies :restart, 'service[shinken]'
+end
+
+node['shinken']['services'].each do |svc_name, svc_conf|
+  if svc_conf['hostgroup_name'] &&
+    !node['shinken']['hostgroups'][svc_conf['hostgroup_name']]
+    fail "Service #{svc_name} refers to hostgroup " \
+      "#{svc_conf['hostgroup_name']} but that hostgroup does not seem to " \
+      'exist.'
+  end
+
+  template "/etc/shinken/services/#{svc_name}.cfg" do
+    source 'generic-definition.cfg.erb'
+    owner  node['shinken']['user']
+    group  node['shinken']['group']
+    mode   0644
+    variables(
+      type: 'service',
+      conf: svc_conf.merge(node['shinken']['service_defaults'])
+    )
+    notifies :restart, 'service[shinken]'
+  end
+end
+
+search(:node, "chef_environment:#{node.chef_environment}").each do |n|
+  host_conf = {
+    'host_name' => n.name,
+    'alias' => n.name,
+    'address' => n['fqdn']
+  }
+
+  template "/etc/shinken/hosts/#{n.name}.cfg" do
+    source 'generic-definition.cfg.erb'
+    owner  node['shinken']['user']
+    group  node['shinken']['group']
+    mode   0644
+    variables(
+      type: 'host',
+      conf: host_conf.merge(node['shinken']['host_defaults'])
+    )
+    notifies :restart, 'service[shinken-arbiter]'
+  end
+end
+
+node['shinken']['hostgroups'].each do |hg_name, hg_conf|
+  conf = {}
+  conf['hostgroup_name'] = hg_name
+
+  if hg_conf['search_str']
+    conf['members'] = search(
+      :node,
+      "chef_environment:#{node.chef_environment} AND " + hg_conf['search_str']
+    ).map { |n| n.name }.join(',')
+  elsif hg_conf['members']
+    conf['members'] = hg_conf['members'].join(',')
+  else
+    fail "Hostgroup #{hg_name} must contain either `search_str` or `members`."
+  end
+
+  template "/etc/shinken/hostgroups/#{hg_name}.cfg" do
+    source 'generic-definition.cfg.erb'
+    owner  node['shinken']['user']
+    group  node['shinken']['group']
+    mode   0644
+    variables(
+      type: 'hostgroup',
+      conf: hg_conf['conf'].merge(conf)
+    )
+    notifies :restart, 'service[shinken-arbiter]'
+  end
+  
+end
