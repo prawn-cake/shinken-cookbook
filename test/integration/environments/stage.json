@@ -19,7 +19,7 @@
         "stage-dns": {
           "hostgroup_name": "dns-servers",
           "service_description": "DNS Service Check",
-          "check_command": "check_dig!stage-dns-1b.priv.evertrue.com",
+          "check_command": "check_dig!test-dns.local",
           "contact_groups": "admins"
         }
       }

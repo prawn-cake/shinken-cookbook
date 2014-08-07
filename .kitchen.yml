@@ -6,7 +6,7 @@ provisioner:
   name: chef_zero
   client_rb:
     environment: 'stage'
-  encrypted_data_bag_secret_key_path: <%= ENV['HOME'] %>/.chef/encrypted_data_bag_secret
+  encrypted_data_bag_secret_key_path: test/integration/encrypted_data_bag_secret
 
 platforms:
   - name: ubuntu-12.04
@@ -17,8 +17,28 @@ suites:
       network:
       - [ 'private_network', {ip: '192.168.33.11'}]
     run_list: [
+      'recipe[mock-ec2::default]',
+      'recipe[ec2dnsserver::default]',
       'recipe[shinken::default]',
       'recipe[shinken::webui]',
       'recipe[shinken::broker]'
     ]
     attributes:
+      ec2:
+        mac: '00:00:00:00:00:00'
+        network_interfaces_macs:
+          '00:00:00:00:00:00':
+            vpc_ipv4_cidr_block: 10.99.0.0/16
+      ec2dnsserver:
+        contact_email: 'hostmaster@yourdomain.local'
+        recursion_clients:
+          - 192.168.19.0/24
+        avoid_subnets: []
+        zones:
+          vagrantup.com: {}
+          test-dns.local:
+            stub: true
+            ns_zone: local
+            static_records:
+              value: 192.168.33.11
+              type: A
