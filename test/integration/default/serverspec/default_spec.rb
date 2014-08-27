@@ -79,7 +79,7 @@ describe 'Shinken Web UI' do
   context command('rm -f /tmp/cookies.txt && curl -s -b /tmp/cookies.txt ' \
     '-c /tmp/cookies.txt http://localhost:7767/user/auth -d ' \
     '\'login=testuser&password=testpass&submit=submit\' && ' \
-    'curl -s -b cookies.txt -c cookies.txt http://localhost:7767/all') do
+    'curl -s -b /tmp/cookies.txt -c /tmp/cookies.txt http://localhost:7767/all') do
     it { should return_stdout(/DNS Service Check/) }
   end
 end
