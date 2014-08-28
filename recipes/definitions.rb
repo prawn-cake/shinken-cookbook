@@ -72,6 +72,20 @@ node['shinken']['services'].each do |svc_name, svc_conf|
   end
 end
 
+node['shinken']['commands'].each do |cmd_name, cmd_conf|
+  template "/etc/shinken/commands/#{svc_name}.cfg" do
+    source 'generic-definition.cfg.erb'
+    owner  node['shinken']['user']
+    group  node['shinken']['group']
+    mode   0644
+    variables(
+      type: 'command',
+      conf: cmd_conf
+    )
+    notifies :restart, 'service[shinken]'
+  end
+end
+
 search(:node, "chef_environment:#{node.chef_environment}").each do |n|
   host_conf = {
     'host_name' => n.name,
