@@ -1,3 +1,7 @@
+# 1.0.3
+
+* Move definitions to earlier in the process
+
 # 1.0.2
 
 * Add check_http command
