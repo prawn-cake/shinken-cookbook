@@ -1,3 +1,7 @@
+# 1.0.4
+
+* Attribute-ize host search string
+
 # 1.0.3
 
 * Move definitions to earlier in the process
