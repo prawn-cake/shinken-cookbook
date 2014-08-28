@@ -73,7 +73,7 @@ node['shinken']['services'].each do |svc_name, svc_conf|
 end
 
 node['shinken']['commands'].each do |cmd_name, cmd_conf|
-  template "/etc/shinken/commands/#{svc_name}.cfg" do
+  template "/etc/shinken/commands/#{cmd_name}.cfg" do
     source 'generic-definition.cfg.erb'
     owner  node['shinken']['user']
     group  node['shinken']['group']
