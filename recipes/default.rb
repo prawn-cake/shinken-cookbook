@@ -50,6 +50,8 @@ end
   python_pip pkg
 end
 
+include_recipe 'shinken::definitions'
+
 %w(
   shinken
   shinken-arbiter
@@ -71,6 +73,4 @@ execute 'shinken-init' do
   creates "#{node['shinken']['home']}/.shinken.ini"
   action  :run
 end
-
-include_recipe 'shinken::definitions'
 
