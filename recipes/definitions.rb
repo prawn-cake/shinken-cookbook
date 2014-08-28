@@ -88,7 +88,10 @@ node['shinken']['commands'].each do |cmd_name, cmd_conf|
   end
 end
 
-search(:node, "chef_environment:#{node.chef_environment}").each do |n|
+search(
+  :node,
+  node['shinken']['host_search_query']
+).each do |n|
   host_conf = {
     'host_name' => n.name,
     'alias' => n.name,

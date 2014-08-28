@@ -21,3 +21,6 @@ default['shinken']['commands'] = {
       '--onredirect=follow --port=$ARG1$ --url=$ARG2$'
   }
 }
+
+default['shinken']['host_search_query'] =
+  "chef_environment:#{node.chef_environment}"
