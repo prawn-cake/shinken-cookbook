@@ -1,3 +1,7 @@
+# 1.0.5
+
+* Add command: check_http_content
+
 # 1.0.4
 
 * Attribute-ize host search string
