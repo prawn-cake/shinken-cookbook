@@ -1,3 +1,7 @@
+# 1.0.6
+
+* Fix command name in check_http_content (to make it reflect the file name)
+
 # 1.0.5
 
 * Add command: check_http_content
