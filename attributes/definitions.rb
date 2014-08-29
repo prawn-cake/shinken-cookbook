@@ -21,7 +21,7 @@ default['shinken']['commands'] = {
       '--onredirect=follow --port=$ARG1$ --url=$ARG2$'
   },
   'check_http_content' => {
-    'command_name' => 'check_http',
+    'command_name' => 'check_http_content',
     'command_line' => '$NAGIOSPLUGINSDIR$/check_http -I $HOSTADDRESS$ ' \
       '--onredirect=follow --port=$ARG1$ --url=$ARG2$ --regex=$ARG3$'
   }
