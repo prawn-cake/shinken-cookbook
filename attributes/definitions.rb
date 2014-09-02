@@ -24,6 +24,13 @@ default['shinken']['commands'] = {
     'command_name' => 'check_http_content',
     'command_line' => '$NAGIOSPLUGINSDIR$/check_http -I $HOSTADDRESS$ ' \
       '--onredirect=follow --port=$ARG1$ --url=$ARG2$ --regex=$ARG3$'
+  },
+  'check_reboot_required' => {
+    'command_name' => 'check_reboot_required',
+    'command_line' => '$NAGIOSPLUGINSDIR$/check_by_ssh ' \
+      '--hostname=$HOSTADDRESS$ ' \
+      '--command=\'test -f /var/run/reboot-required\' ' \
+      "--identity=#{node['shinken']['home']}/.ssh/id_rsa"
   }
 }
 

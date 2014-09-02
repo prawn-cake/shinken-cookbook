@@ -44,6 +44,7 @@ if node['platform_family'] == 'debian'
 end
 
 include_recipe 'shinken::install'
+include_recipe 'shinken::keys'
 include_recipe 'shinken::definitions'
 
 %w(
