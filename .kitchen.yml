@@ -26,6 +26,8 @@ suites:
       'recipe[shinken::broker]'
     ]
     attributes:
+      shinken:
+        install_type: source
       et_hostname:
         addl_hosts_entries:
         - '192.168.33.11 test-dns.local'

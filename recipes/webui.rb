@@ -1,5 +1,28 @@
+if node['shinken']['install_type'] == 'source'
+  ark 'mod-webui' do
+    url node['shinken']['webui']['source_url']
+    checksum node['shinken']['webui']['source_checksum']
+    path Chef::Config[:file_cache_path]
+    action :put
+    notifies :run, 'execute[install-webui]'
+  end
+end
+
+execute "install-webui" do
+  if node['shinken']['install_type'] == 'source'
+    command "/usr/bin/shinken install --local " \
+      "#{Chef::Config[:file_cache_path]}/mod-webui"
+  else
+    command '/usr/bin/shinken install webui'
+  end
+  user node['shinken']['user']
+  environment('HOME' => node['shinken']['home'])
+  creates "#{node['shinken']['home']}/modules/webui"
+  action  :run
+  notifies :restart, 'service[shinken]'
+end
+
 %w(
-  webui
   auth-cfg-password
   sqlitedb
 ).each do |mod|

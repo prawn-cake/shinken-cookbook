@@ -43,13 +43,7 @@ if node['platform_family'] == 'debian'
   end
 end
 
-%w(
-  shinken
-  pycurl
-).each do |pkg|
-  python_pip pkg
-end
-
+include_recipe 'shinken::install'
 include_recipe 'shinken::definitions'
 
 %w(

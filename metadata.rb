@@ -6,5 +6,6 @@ description      'Installs/Configures shinken'
 long_description 'Installs/Configures shinken'
 version          '1.0.6'
 
+depends 'ark'
 depends 'apt'
 depends 'python'
