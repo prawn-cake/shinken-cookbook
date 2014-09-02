@@ -1,3 +1,7 @@
+# 1.1.1
+
+* Add private key install code so that we can use check_by_ssh
+
 # 1.1.0
 
 * Add a "from source" install method and include a way to differentiate between that and "from package"
