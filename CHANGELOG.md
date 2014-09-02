@@ -1,3 +1,7 @@
+# 1.1.0
+
+* Add a "from source" install method and include a way to differentiate between that and "from package"
+
 # 1.0.6
 
 * Fix command name in check_http_content (to make it reflect the file name)
