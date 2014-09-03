@@ -14,6 +14,8 @@ default['shinken']['host_defaults'] =
     'use' => 'generic-host'
   )
 
+default['shinken']['agent_user'] = 'shinkenagent'
+
 default['shinken']['commands'] = {
   'check_http' => {
     'command_name' => 'check_http',
@@ -29,6 +31,7 @@ default['shinken']['commands'] = {
     'command_name' => 'check_reboot_required',
     'command_line' => '$NAGIOSPLUGINSDIR$/check_by_ssh ' \
       '--hostname=$HOSTADDRESS$ ' \
+      "--logname=#{node['shinken']['agent_user']} " \
       '--command=\'test -f /var/run/reboot-required\' ' \
       "--identity=#{node['shinken']['home']}/.ssh/id_rsa"
   }
