@@ -1,3 +1,7 @@
+# 1.1.2
+
+* Add attribute for shinken agent user
+
 # 1.1.1
 
 * Add private key install code so that we can use check_by_ssh
