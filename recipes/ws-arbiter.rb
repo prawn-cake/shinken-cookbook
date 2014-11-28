@@ -11,4 +11,5 @@ template "#{node[:shinken][:settings]}/modules/ws_arbiter.cfg" do
     owner  node[:shinken][:user]
     group  node[:shinken][:group]
     mode   0644
+    notifies :restart, 'service[shinken]'
 end
