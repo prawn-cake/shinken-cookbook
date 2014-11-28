@@ -1,10 +1,15 @@
-credentials =
-  Chef::EncryptedDataBagItem.load(
+#credentials =
+#  Chef::EncryptedDataBagItem.load(
+#    node['shinken']['webui']['credentials_data_bag'],
+#    node['shinken']['webui']['credentials_data_bag_item']
+#  )
+
+credentials = data_bag_item(
     node['shinken']['webui']['credentials_data_bag'],
     node['shinken']['webui']['credentials_data_bag_item']
-  )
+)
 
-if credentials['shinken']
+if credentials['shinken'] && credentials['shinken'].length > 0
   shinken_users = search(:users, 'shinken:*')
 
   shinken_users.each do |contact|
@@ -88,27 +93,29 @@ node['shinken']['commands'].each do |cmd_name, cmd_conf|
   end
 end
 
-search(
-  :node,
-  node['shinken']['host_search_query']
-).each do |n|
-  host_conf = {
-    'host_name' => n.name,
-    'alias' => n.name,
-    'address' => n['fqdn']
-  }
-
-  template "/etc/shinken/hosts/#{n.name}.cfg" do
-    source 'generic-definition.cfg.erb'
-    owner  node['shinken']['user']
-    group  node['shinken']['group']
-    mode   0644
-    variables(
-      type: 'host',
-      conf: host_conf.merge(node['shinken']['host_defaults'])
-    )
-    notifies :restart, 'service[shinken-arbiter]'
-  end
+if node.chef_environment != "_default"  # vagrant case
+    search(
+      :node,
+      node['shinken']['host_search_query']
+    ).each do |n|
+      host_conf = {
+        'host_name' => n.name,
+        'alias' => n.name,
+        'address' => n['fqdn']
+      }
+    
+      template "/etc/shinken/hosts/#{n.name}.cfg" do
+        source 'generic-definition.cfg.erb'
+        owner  node['shinken']['user']
+        group  node['shinken']['group']
+        mode   0644
+        variables(
+          type: 'host',
+          conf: host_conf.merge(node['shinken']['host_defaults'])
+        )
+        notifies :restart, 'service[shinken-arbiter]'
+      end
+    end
 end
 
 node['shinken']['hostgroups'].each do |hg_name, hg_conf|
